@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Row,
@@ -10,11 +11,20 @@ import {
   ListGroupItem,
 } from 'react-bootstrap';
 import Rating from '../components/Rating';
-import products from '../products';
+import axios from 'axios';
 
 const ProductScreen = () => {
+  const [product, setProduct] = useState({});
+
   const { id: productId } = useParams();
-  const product = products.find((p) => p._id === productId);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const { data } = await axios.get(`/api/products/${productId}`);
+      setProduct(data);
+    };
+    fetchProduct();
+  }, [productId]);
 
   return (
     <>
@@ -27,17 +37,17 @@ const ProductScreen = () => {
         </Col>
         <Col md={4}>
           <ListGroup variant='flush'>
-            <ListGroup.Item>
+            <ListGroupItem>
               <h3>{product.name}</h3>
-            </ListGroup.Item>
-            <ListGroup.Item>
+            </ListGroupItem>
+            <ListGroupItem>
               <Rating
                 value={product.rating}
                 text={`${product.numReviews} reviews`}
               />
-            </ListGroup.Item>
-            <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
-            <ListGroup.Item>Price: ${product.description}</ListGroup.Item>
+            </ListGroupItem>
+            <ListGroupItem>Price: ${product.price}</ListGroupItem>
+            <ListGroupItem>Price: ${product.description}</ListGroupItem>
           </ListGroup>
         </Col>
         <Col md={3}>
